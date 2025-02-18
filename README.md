@@ -5,26 +5,26 @@
    - 🐸 Display a list of Amphibians :
 
       - ❌ **NOT IMPLEMENTED** Retrieves and displays a list of amphibians via a REST API.
-      - ❌ **NOT IMPLEMENTED** Shows detailed information including name, type, description, and image.
+      - 🟩 **IN PROGRESS** Shows detailed information including name, type, description, and image.
 
    - 🎨 **Modern and Fluid Interface**:
 
       - TopBar:
-         - ❌ **NOT IMPLEMENTED** Displays application name.
-         - ❌ **NOT IMPLEMENTED** Supports dynamic behavior on scroll.
+         - ✅ **DONE** Displays application name.
+         - 🟩 **IN PROGRESS** Supports dynamic behavior on scroll.
       - Light/Dark Mode:
-         - ❌ **NOT IMPLEMENTED** Fully supports Material 3 with adaptive light and dark themes.
+         - ✅ **DONE** Fully supports Material 3 with adaptive light and dark themes.
 
    - 🔄 **Real-time status management**:
 
       - ❌ **NOT IMPLEMENTED** Uses a ViewModel to handle API responses and manage UI state.
-      - ❌ **NOT IMPLEMENTED** Implements StateFlow for reactive state updates.
+      - 🟩 **IN PROGRESS** Implements StateFlow for reactive state updates.
 
    - 🚀 Performance and responsiveness:
    
       - ❌ **NOT IMPLEMENTED** Implements lazy loading for efficient image handling. 
       - ❌ **NOT IMPLEMENTED** Uses Coil for fast and optimized image fetching.
-      - ❌ **NOT IMPLEMENTED** Supports smooth scrolling and responsive display.
+      - 🟩 **IN PROGRESS** Supports smooth scrolling and responsive display.
       
    - 🛠 Error Handling & User Feedback:
 

@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.dcac.amphibians.ui.screens.AmphibiansPhotosApp
 import com.dcac.amphibians.ui.theme.AmphibiansTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,36 +22,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AmphibiansTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        style = MaterialTheme.typography.displayLarge,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    AmphibiansPhotosApp()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(
-    name: String,
-    style: androidx.compose.ui.text.TextStyle,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = "Hello $name!",
-        style = style,
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AmphibiansTheme {
-        Greeting("Android", style = MaterialTheme.typography.displayLarge)
     }
 }
