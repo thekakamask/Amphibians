@@ -74,6 +74,7 @@ dependencies {
     //COIL
     implementation(libs.coil.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.storage)
 
 
     testImplementation(libs.junit)

@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Amphibians</string>
+    <string name="ellipsis">...</string>
+    <string name="back_button">Back</string>
+
+    <string name="all_types">All Types</string>
+    <string name="hylidae">Hylidae</string>
+    <string name="alytidae">Alytidae</string>
+    <string name="dendrobatidae">Dendrobatidae</string>
+    <string name="salamandridae">Salamandridae</string>
+    <string name="ambystomatidae">Ambystomatidae</string>
+    <string name="ranidae">Ranidae</string>
+    <string name="cryptobranchidae">Cryptobranchidae</string>
 
 </resources>
