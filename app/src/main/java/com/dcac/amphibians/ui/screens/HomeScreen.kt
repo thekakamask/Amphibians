@@ -15,26 +15,25 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.dcac.amphibians.R
 import com.dcac.amphibians.data.LocalDataProviderAmphibians
-import com.dcac.amphibians.data.LocalNavigationAmphibiansTypesContentDataProvider
 import com.dcac.amphibians.model.Amphibian
 import com.dcac.amphibians.model.AmphibiansUiState
 
 @Composable
 fun HomeScreen(
-    amphibiansUiState: AmphibiansUiState,
+    amphibiansUiState: AmphibiansUiState.Success,
     onAmphibiansClick: (Amphibian) -> Unit,
     onDetailScreenAndroidBackPressed: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ){
     if (amphibiansUiState.isShowingDetailsScreen) {
         AmphibiansDetailsScreen(
@@ -53,7 +52,7 @@ fun HomeScreen(
 
 @Composable
 fun AmphibiansGridScreen(
-    amphibiansUiState: AmphibiansUiState,
+    amphibiansUiState: AmphibiansUiState.Success,
     onAmphibiansClick: (Amphibian) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,7 +64,7 @@ fun AmphibiansGridScreen(
             columns = GridCells.Adaptive(dimensionResource(R.dimen.grid_cells_size)),
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small)),
         ) {
-            items(items = amphibiansUiState.amphibianList, key = { it.id }) { amphibian ->
+            items(items = amphibiansUiState.amphibianList, key = { it.name }) { amphibian ->
                 AmphibianCard(
                     amphibian = amphibian,
                     onAmphibianClick = onAmphibiansClick
@@ -82,25 +81,36 @@ fun AmphibianCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(4.dp)
+            .padding(dimensionResource(R.dimen.padding_small))
             .clickable { onAmphibianClick(amphibian) }
     ) {
         Column(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.padding_medium)),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Text(
-                text = amphibian.name,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimensionResource(R.dimen.padding_small))
-            )
-            if (amphibian.name.length < 19)
+            if (amphibian.name.length <= 19) {
                 Text(
-                    text = ""
+                    text = amphibian.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
                 )
+                Text(
+                    text = "",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .padding(bottom = dimensionResource(R.dimen.padding_small))
+                )
+            } else {
+                Text(
+                    text = amphibian.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(bottom = dimensionResource(R.dimen.padding_small))
+                )
+            }
 
             // Image
             Image(
@@ -108,7 +118,6 @@ fun AmphibianCard(
                 contentDescription = amphibian.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .aspectRatio(1.5f)
                     .clip(MaterialTheme.shapes.large)
             )
@@ -126,7 +135,7 @@ fun AmphibianCard(
 
 @Composable
 fun AmphibiansDetailsScreen(
-    amphibiansUiState: AmphibiansUiState,
+    amphibiansUiState: AmphibiansUiState.Success,
     onDetailScreenAndroidBackPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -137,8 +146,8 @@ fun AmphibiansDetailsScreen(
     val currentAmphibian = amphibiansUiState.currentAmphibian
 
     if (currentAmphibian != null) {
-        val typeTextRes = LocalNavigationAmphibiansTypesContentDataProvider.navigationAmphibiansTypesContentList
-            .find { it.amphibianType == currentAmphibian.type }?.text
+        /*val typeTextRes = LocalNavigationAmphibiansTypesContentDataProvider.navigationAmphibiansTypesContentList
+            .find { it.amphibianType == currentAmphibian.type }?.text*/
 
         Column(
             modifier = modifier
@@ -153,15 +162,13 @@ fun AmphibiansDetailsScreen(
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_small))
             )
-            if (typeTextRes != null) {
-                Text(
-                    text = stringResource(id = typeTextRes),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = dimensionResource(R.dimen.padding_small))
-                )
-            }
+            Text(
+                text = currentAmphibian.type,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
+            )
             Image(
                 painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(currentAmphibian.imgSrc)),
                 contentDescription = currentAmphibian.name,

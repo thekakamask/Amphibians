@@ -2,6 +2,8 @@
     <string name="app_name">Amphibians</string>
     <string name="ellipsis">...</string>
     <string name="back_button">Back</string>
+    <string name="error_loading">Error loading</string>
+    <string name="loading">Loading</string>
 
     <string name="all_types">All Types</string>
     <string name="hylidae">Hylidae</string>

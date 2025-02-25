@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,15 +30,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dcac.amphibians.R
-import com.dcac.amphibians.data.NavigationAmphibiansTypesContent
-import com.dcac.amphibians.model.AmphibiansTypes
 import com.dcac.amphibians.model.AmphibiansUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmphibiansPhotosApp() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val amphibianViewModel: AmphibiansViewModel = viewModel()
+    val amphibianViewModel: AmphibiansViewModel = viewModel(factory = AmphibiansViewModel.Factory)
     val amphibianUiState = amphibianViewModel.uiState.collectAsState().value
 
     Scaffold(
@@ -51,13 +50,28 @@ fun AmphibiansPhotosApp() {
             )
         }
     ) { paddingValues ->
-        Surface(modifier = Modifier.fillMaxSize()) {
-            HomeScreen(
-                amphibiansUiState = amphibianUiState,
-                onAmphibiansClick = { amphibianViewModel.updateCurrentAmphibian(it) },
-                onDetailScreenAndroidBackPressed = { amphibianViewModel.resetHomeScreenStates() },
-                modifier = Modifier.padding(paddingValues)
-            )
+        Surface(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            when (amphibianUiState) {
+                is AmphibiansUiState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+                }
+
+                is AmphibiansUiState.Error -> {
+                    Text(
+                        text = stringResource(R.string.error_loading),
+                        modifier = Modifier.fillMaxSize(),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
+
+                is AmphibiansUiState.Success -> {
+                    HomeScreen(
+                        amphibiansUiState = amphibianUiState,
+                        onAmphibiansClick = { amphibianViewModel.updateCurrentAmphibian(it) },
+                        onDetailScreenAndroidBackPressed = { amphibianViewModel.resetHomeScreenStates() }
+                    )
+                }
+            }
         }
     }
 }
@@ -68,7 +82,7 @@ fun AmphibiansTopAppBar(
     amphibiansUiState: AmphibiansUiState,
     scrollBehavior: TopAppBarScrollBehavior,
     onBackArrowClick: () -> Unit,
-    onTypeSelected:(AmphibiansTypes?) -> Unit
+    onTypeSelected:(String) -> Unit
 ) {
     Column {
         CenterAlignedTopAppBar(
@@ -80,7 +94,7 @@ fun AmphibiansTopAppBar(
                 )
             },
             navigationIcon = {
-                if (amphibiansUiState.isShowingDetailsScreen) {
+                if (amphibiansUiState is AmphibiansUiState.Success && amphibiansUiState.isShowingDetailsScreen) {
                     IconButton(onClick = onBackArrowClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -90,18 +104,38 @@ fun AmphibiansTopAppBar(
                 }
             }
         )
-        if (!amphibiansUiState.isShowingDetailsScreen) {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.padding_small))
-            ) {
-                items(amphibiansUiState.navigationAmphibiansTypesContent) { navigationAmphibiansTypesContent ->
-                    NavigationAmphibiansTypesContentList(
-                        navigationAmphibiansTypesContent = navigationAmphibiansTypesContent,
-                        isSelected = navigationAmphibiansTypesContent.amphibianType == amphibiansUiState.currentAmphibianType,
-                        onNavigationAmphibiansTypesContentClick = { onTypeSelected(it.amphibianType) }
-                    )
+        when (amphibiansUiState) {
+            is AmphibiansUiState.Loading -> {
+                Text(
+                    text = stringResource(R.string.loading),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
+            }
+
+            is AmphibiansUiState.Error -> {
+                Text(
+                    text = stringResource(R.string.error_loading),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+                )
+            }
+
+            is AmphibiansUiState.Success -> {
+                if (!amphibiansUiState.isShowingDetailsScreen) {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = dimensionResource(R.dimen.padding_small))
+                    ) {
+                        items(amphibiansUiState.navigationAmphibiansTypesContent) { type ->
+                            NavigationAmphibiansTypesContentList(
+                                type = type,
+                                isSelected = type == amphibiansUiState.currentAmphibianType,
+                                onNavigationAmphibiansTypesContentClick = { onTypeSelected(it) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -110,21 +144,21 @@ fun AmphibiansTopAppBar(
 
 @Composable
 fun NavigationAmphibiansTypesContentList(
-    navigationAmphibiansTypesContent: NavigationAmphibiansTypesContent,
+    type: String,
     isSelected : Boolean,
-    onNavigationAmphibiansTypesContentClick: (NavigationAmphibiansTypesContent) -> Unit
+    onNavigationAmphibiansTypesContentClick: (String) -> Unit
 ) {
     Card(modifier = Modifier.padding(
         vertical = dimensionResource(R.dimen.padding_medium),
         horizontal = dimensionResource(R.dimen.padding_small))
-        .clickable { onNavigationAmphibiansTypesContentClick(navigationAmphibiansTypesContent) },
+        .clickable { onNavigationAmphibiansTypesContentClick(type) },
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) MaterialTheme.colorScheme.secondary
             else CardDefaults.cardColors().containerColor
         )
         ){
         Text(
-            text = stringResource(id = navigationAmphibiansTypesContent.text),
+            text = type,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
         )
