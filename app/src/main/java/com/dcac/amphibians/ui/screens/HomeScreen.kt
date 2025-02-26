@@ -1,12 +1,10 @@
 package com.dcac.amphibians.ui.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +25,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import coil.compose.AsyncImage
 import com.dcac.amphibians.R
 import com.dcac.amphibians.data.LocalDataProviderAmphibians
 import com.dcac.amphibians.model.Amphibian
@@ -111,16 +109,16 @@ fun AmphibianCard(
                     textAlign = TextAlign.Center
                 )
             }
-            // Image
-            Image(
-                painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(amphibian.imgSrc)),
+            AsyncImage(
+                model = amphibian.imgSrc,
                 contentDescription = amphibian.name,
+                placeholder = painterResource(R.drawable.loading_img),
+                error = painterResource(R.drawable.broken_image_48),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .aspectRatio(1.5f)
                     .clip(MaterialTheme.shapes.large)
             )
-
             Text(
                 text = amphibian.description,
                 style = MaterialTheme.typography.bodyLarge,
@@ -165,17 +163,17 @@ fun AmphibiansDetailsScreen(
                 .fillMaxWidth()
                 .padding(bottom = dimensionResource(R.dimen.padding_small))
         )
-        Image(
-            painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(currentAmphibian.imgSrc)),
+        AsyncImage(
+            model = currentAmphibian.imgSrc,
             contentDescription = currentAmphibian.name,
+            placeholder = painterResource(R.drawable.loading_img),
+            error = painterResource(R.drawable.broken_image_48),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1.5f)
-                .clip(MaterialTheme.shapes.medium)
+                .clip(MaterialTheme.shapes.large)
         )
-
-        // Description complète
         Text(
             text = currentAmphibian.description,
             style = MaterialTheme.typography.titleLarge,

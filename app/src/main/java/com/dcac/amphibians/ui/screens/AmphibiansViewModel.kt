@@ -47,7 +47,7 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
                             name = amphibian.name,
                             type = AmphibiansTypeConverter.convertType(amphibian.type),
                             description = amphibian.description,
-                            imgSrc = amphibian.imgSrc
+                            imgSrc = "android.resource://com.dcac.amphibians/drawable/${amphibian.imgSrc}"
                         )
                         is NetworkAmphibian -> amphibian
                     }
