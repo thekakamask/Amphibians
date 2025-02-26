@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -107,16 +109,22 @@ fun AmphibiansGridScreen(
     modifier: Modifier = Modifier
 ) {
 
+    val gridState = rememberLazyGridState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
         LazyVerticalGrid(
+            state = gridState,
             columns = GridCells.Adaptive(dimensionResource(R.dimen.grid_cells_size)),
             modifier = Modifier
                 .padding(horizontal = dimensionResource(R.dimen.padding_small))
         ) {
-            items(items = amphibiansUiState.filteredAmphibians ?: emptyList(), key = { it.name }) { amphibian ->
+            items(
+                items = amphibiansUiState.filteredAmphibians ?: amphibiansUiState.amphibianList,
+                key = { it.name }
+            ) { amphibian ->
                 AmphibianCard(
                     amphibian = amphibian,
                     onAmphibianClick = onAmphibiansClick,

@@ -2,11 +2,10 @@
 **Amphibians** is a modern Android application developed with Jetpack Compose, displaying a list of amphibians, along with details about them and their images using a REST API. The data will be retrieved from the Internet via a network request and will contain the name, type, description and image URL of each amphibian. The project follows Android development best practices, implementing MVVM architecture and using tools like Retrofit for network calls.
 
 ## ✅ **LAST MAJOR UPDATES**
-   - Display an error screen with retry button in case of network error.
-   - Implement process to relaunch the data loading with the retry button.
+   - Reduce state updates that could cause UI lag, ensuring minimal recompositions.
+   - Generate Signed APK file for smartphone to download and install it directly.
 
 ## ❌ **NEXT UPDATES**
-   - Reduce state updates that could cause UI lag, ensuring minimal recompositions.
    - Smooth & fluid UI/UX animations : improve LazyGrid scrolling performance, smooth TopAppBar and filter transitions, entry & exit animations for grid items.
 
 ## 📋 **Features**
@@ -52,7 +51,9 @@
    
 ## 🚀 **How to Use**
 1. **Launch the App**:
-   - Open the app on a Android device or emulator.
+   - Download the "app-release.apk" file find in \app\release\ .
+   - Install the file in your smartphone or in an emulator. (Good performance because in Release Build Variant)
+   - If you want to use android studio, download the code and launch the app on an Android device or emulator. (Bad performance because in Debug Build Variant)
 2. **Choose to filter by amphibian type or not**:
    - Use the top navigation bar to select a specific amphibian type.
    - Tap on "All Types" to reset the filter and view all amphibians.

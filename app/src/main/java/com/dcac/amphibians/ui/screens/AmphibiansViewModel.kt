@@ -55,12 +55,17 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
 
                 println("🔍 Types extracted: $amphibianTypes")
 
-                _uiState.value = AmphibiansUiState.Success(
+                val newState = AmphibiansUiState.Success(
                     currentAmphibianType = currentAmphibiansType,
                     amphibianList = formattedAmphibians,
                     filteredAmphibians = formattedAmphibians,
                     amphibiansTypes = amphibianTypes
                 )
+
+                // Check if new state is different before emit it
+                if (_uiState.value != newState) {
+                    _uiState.value = newState
+                }
 
                 println("✅ Amphibians loaded successfully: ${amphibiansList.size} items")
             } catch (e: IOException) {

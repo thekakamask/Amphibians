@@ -73,6 +73,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     //COIL
     implementation(libs.coil.compose)
+    //MotionLayout
+    implementation(libs.constraintlayout.compose)
+
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.storage)
 

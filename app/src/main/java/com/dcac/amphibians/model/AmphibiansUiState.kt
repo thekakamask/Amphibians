@@ -1,7 +1,11 @@
 package com.dcac.amphibians.model
 
+import androidx.compose.runtime.Immutable
+
 //HANDLE SUCCESS,ERROR AND LOADING STATES
 sealed interface AmphibiansUiState {
+
+    @Immutable
     data class Success(
         val amphibianList: List<Amphibian>,
         val filteredAmphibians: List<Amphibian>? = null,
