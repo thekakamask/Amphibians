@@ -49,20 +49,4 @@ object LocalDataProviderAmphibians {
             imgSrc = "image_hellbender"
         )
     )
-
-    // Mapping `imgSrc` (String) to a drawable resource ID
-    /*private val amphibianImages = mapOf(
-        "hyla_arborea" to R.drawable.image_hyla_arborea,
-        "alytes_obstetrican" to R.drawable.image_alytes_obstetrican,
-        "dendrobate_frog" to R.drawable.image_dendrobate,
-        "fire_salamander" to R.drawable.image_salamandra,
-        "axolotl" to R.drawable.image_ambystoma_mexicanum,
-        "rana_temporaria" to R.drawable.image_rana_temporaria,
-        "hellbender" to R.drawable.image_cryptobranchus_alleganiensis
-    )
-
-    // Function for recover img from Amphibians model
-    fun getDrawableRes(imgSrc: String?): Int {
-        return amphibianImages[imgSrc] ?: R.drawable.broken_image_48  // Icône Material par défaut
-    }*/
 }

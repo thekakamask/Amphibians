@@ -20,16 +20,13 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-// HANDLE UI STATE AND EXPOSE DATAS VIA STATEFLOW
+// HANDLE UI STATE AND EXPOSE DATA VIA STATEFLOW
 class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository) : ViewModel() {
 
-    /*private val _uiState = MutableStateFlow(AmphibiansUiState())
-    val uiState: StateFlow<AmphibiansUiState> = _uiState.asStateFlow()*/
     private val _uiState = MutableStateFlow<AmphibiansUiState>(AmphibiansUiState.Loading)
     val uiState: StateFlow<AmphibiansUiState> = _uiState.asStateFlow()
 
     init {
-        //initialiseUiState()
         getAmphibians()
     }
 
@@ -40,7 +37,6 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
                 val currentAmphibiansType = ALL_TYPES
                 val amphibiansList = amphibiansRepository.getAmphibians()
 
-                // Convertir les types Int en String pour normaliser
                 val formattedAmphibians = amphibiansList.map { amphibian ->
                     when (amphibian) {
                         is LocalAmphibian -> NetworkAmphibian(
@@ -52,8 +48,6 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
                         is NetworkAmphibian -> amphibian
                     }
                 }
-
-
                 // Extract distinct types after conversion
                 val amphibianTypes = (listOf(ALL_TYPES) + formattedAmphibians.map { it.type })
                     .distinct()
@@ -82,29 +76,6 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
         }
     }
 
-    /*private fun initialiseUiState() {
-
-        val amphibianList = LocalDataProviderAmphibians.amphibians
-        val navigationAmphibiansTypesContent = LocalNavigationAmphibiansTypesContentDataProvider.navigationAmphibiansTypesContentList
-
-        val currentAmphibian = amphibianList.first()
-
-        _uiState.value = AmphibiansUiState(
-            amphibianList = amphibianList,
-            navigationAmphibiansTypesContent = navigationAmphibiansTypesContent,
-            currentAmphibian = currentAmphibian
-        )
-    }*/
-
-    /*fun updateCurrentAmphibian(amphibian: Amphibian) {
-        _uiState.update {
-            it.copy(
-                isShowingDetailsScreen = true,
-                currentAmphibian = amphibian
-            )
-        }
-    }*/
-
     fun updateCurrentAmphibian(amphibian: Amphibian) {
         if (_uiState.value is AmphibiansUiState.Success) {
             _uiState.update {
@@ -115,20 +86,6 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
             }
         }
     }
-
-    /*fun updateCurrentAmphibianType(amphibianType: AmphibiansTypes?) {
-        _uiState.update {
-            val filteredList = if (amphibianType == null) {
-                LocalDataProviderAmphibians.amphibians
-            } else {
-                LocalDataProviderAmphibians.amphibians.filter { it.type == amphibianType }
-            }
-            it.copy(
-                currentAmphibianType = amphibianType,
-                amphibianList = filteredList
-            )
-        }
-    }*/
 
     fun updateCurrentAmphibianType(selectedType: String) {
         if (_uiState.value is AmphibiansUiState.Success) {
@@ -162,14 +119,9 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
         }
     }
 
-    /*fun resetHomeScreenStates() {
-        _uiState.update {
-            it.copy(
-                isShowingDetailsScreen = false,
-                currentAmphibian = null
-            )
-        }
-    }*/
+    fun retryLoading() {
+        getAmphibians()
+    }
 
     companion object {
         private const val ALL_TYPES = "All Types"

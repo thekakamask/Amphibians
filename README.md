@@ -2,12 +2,11 @@
 **Amphibians** is a modern Android application developed with Jetpack Compose, displaying a list of amphibians, along with details about them and their images using a REST API. The data will be retrieved from the Internet via a network request and will contain the name, type, description and image URL of each amphibian. The project follows Android development best practices, implementing MVVM architecture and using tools like Retrofit for network calls.
 
 ## ✅ **LAST MAJOR UPDATES**
-   - Load API images dynamically using Coil instead of using placeholders for a more realistic data experience.
-   - Convert local amphibians image strings to URI format to enable Coil usage for both local and network amphibians.
+   - Display an error screen with retry button in case of network error.
+   - Implement process to relaunch the data loading with the retry button.
 
 ## ❌ **NEXT UPDATES**
    - Reduce state updates that could cause UI lag, ensuring minimal recompositions.
-   - Display a retry button or auto-retry mechanism when network issues occur.
    - Smooth & fluid UI/UX animations : improve LazyGrid scrolling performance, smooth TopAppBar and filter transitions, entry & exit animations for grid items.
 
 ## 📋 **Features**
@@ -32,14 +31,14 @@
 
    - 🚀 Performance and responsiveness:
    
-      - 🟩 **IN PROGRESS** Implements lazy loading for efficient image handling. 
+      - ✅ **DONE** Implements lazy loading for efficient image handling. 
       - ✅ **DONE** Uses Coil for fast and optimized image fetching.
       - 🟩 **IN PROGRESS** Supports smooth scrolling and responsive display.
       
    - 🛠 Error Handling & User Feedback:
 
-      - 🟩 **IN PROGRESS** Displays appropriate error messages for network failures.
-      - 🟩 **IN PROGRESS** Provides loading indicators for better UX.
+      - ✅ **DONE*** Displays appropriate error messages for network failures.
+      - ✅ **DONE** Provides loading indicators for better UX.
 
 ## 🛠️ **Tech Stack**
    - **Kotlin**: Modern, concise language for Android development.
@@ -73,7 +72,15 @@
 
 - **Filtered home screen**:
 
-   ![filtered home screen](screenshots/filtered_home_screen.png)
+   ![Filtered home screen](screenshots/filtered_home_screen.png)
+
+- **Error home screen**:
+
+   ![Error home screen](screenshots/error_home_screen.png)
+
+- **Loading home screen**:
+
+   ![Loading home screen](screenshots/loading_home_screen.png)
 
 - **Details screen**:
 

@@ -4,10 +4,12 @@
     <string name="back_button">Back</string>
     <string name="error_loading">Error loading</string>
     <string name="loading">Loading</string>
+    <string name="retry">Retry loading</string>
 
     <string name="all_types">All Types</string>
     <string name="toad">Toad</string>
     <string name="frog">Frog</string>
     <string name="salamander">Salamander</string>
+    <string name="loading_failed">Loading failed</string>
 
 </resources>
