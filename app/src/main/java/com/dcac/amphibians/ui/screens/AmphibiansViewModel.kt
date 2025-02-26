@@ -9,6 +9,9 @@ import com.dcac.amphibians.AmphibiansApplication
 import com.dcac.amphibians.data.AmphibiansRepository
 import com.dcac.amphibians.model.Amphibian
 import com.dcac.amphibians.model.AmphibiansUiState
+import com.dcac.amphibians.model.LocalAmphibian
+import com.dcac.amphibians.model.NetworkAmphibian
+import com.dcac.amphibians.utils.AmphibiansTypeConverter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,17 +37,38 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
         viewModelScope.launch {
             _uiState.value = AmphibiansUiState.Loading
             try {
-                val amphibians = amphibiansRepository.getAmphibians()
-                // Extract uniques types from the amphibians lists
-                val amphibianTypes = listOf(ALL_TYPES) + amphibians.map { it.type }.distinct()
+                val currentAmphibiansType = ALL_TYPES
+                val amphibiansList = amphibiansRepository.getAmphibians()
+
+                // Convertir les types Int en String pour normaliser
+                val formattedAmphibians = amphibiansList.map { amphibian ->
+                    when (amphibian) {
+                        is LocalAmphibian -> NetworkAmphibian(
+                            name = amphibian.name,
+                            type = AmphibiansTypeConverter.convertType(amphibian.type),
+                            description = amphibian.description,
+                            imgSrc = amphibian.imgSrc
+                        )
+                        is NetworkAmphibian -> amphibian
+                    }
+                }
+
+
+                // Extract distinct types after conversion
+                val amphibianTypes = (listOf(ALL_TYPES) + formattedAmphibians.map { it.type })
+                    .distinct()
+                    .sorted()
+
                 println("🔍 Types extracted: $amphibianTypes")
 
                 _uiState.value = AmphibiansUiState.Success(
-                    amphibianList = amphibians,
-                    navigationAmphibiansTypesContent = amphibianTypes
+                    currentAmphibianType = currentAmphibiansType,
+                    amphibianList = formattedAmphibians,
+                    filteredAmphibians = formattedAmphibians,
+                    amphibiansTypes = amphibianTypes
                 )
 
-                println("✅ Amphibians loaded successfully: ${amphibians.size} items")
+                println("✅ Amphibians loaded successfully: ${amphibiansList.size} items")
             } catch (e: IOException) {
                 _uiState.value = AmphibiansUiState.Error("Network error, please check your connection.")
                 println("❌ Network error: ${e.message}")
@@ -106,18 +130,22 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
         }
     }*/
 
-    fun updateCurrentAmphibianType(selectedType: String?) {
+    fun updateCurrentAmphibianType(selectedType: String) {
         if (_uiState.value is AmphibiansUiState.Success) {
             _uiState.update {
                 val successState = it as AmphibiansUiState.Success
-                val filteredList = if (selectedType == null || selectedType == ALL_TYPES) {
-                    successState.amphibianList
-                } else {
-                    successState.amphibianList.filter { it.type == selectedType }
+
+                val filteredList =
+                    if (selectedType == ALL_TYPES) {
+                        successState.amphibianList
+                    } else {
+                        successState.amphibianList.filter { amphibian ->
+                            (amphibian as NetworkAmphibian).type == selectedType
+                    }
                 }
                 successState.copy(
                     currentAmphibianType = selectedType,
-                    amphibianList = filteredList
+                    filteredAmphibians = filteredList
                 )
             }
         }

@@ -1,16 +1,21 @@
 package com.dcac.amphibians.ui.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +32,7 @@ import com.dcac.amphibians.R
 import com.dcac.amphibians.data.LocalDataProviderAmphibians
 import com.dcac.amphibians.model.Amphibian
 import com.dcac.amphibians.model.AmphibiansUiState
+import com.dcac.amphibians.model.NetworkAmphibian
 
 @Composable
 fun HomeScreen(
@@ -56,18 +62,20 @@ fun AmphibiansGridScreen(
     onAmphibiansClick: (Amphibian) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
     ) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(dimensionResource(R.dimen.grid_cells_size)),
-            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small)),
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(R.dimen.padding_small))
         ) {
-            items(items = amphibiansUiState.amphibianList, key = { it.name }) { amphibian ->
+            items(items = amphibiansUiState.filteredAmphibians ?: emptyList(), key = { it.name }) { amphibian ->
                 AmphibianCard(
                     amphibian = amphibian,
-                    onAmphibianClick = onAmphibiansClick
+                    onAmphibianClick = onAmphibiansClick,
                 )
             }
         }
@@ -77,7 +85,7 @@ fun AmphibiansGridScreen(
 @Composable
 fun AmphibianCard(
     amphibian: Amphibian,
-    onAmphibianClick: (Amphibian) -> Unit
+    onAmphibianClick: (Amphibian) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -90,28 +98,19 @@ fun AmphibianCard(
                 .padding(dimensionResource(R.dimen.padding_medium)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (amphibian.name.length <= 19) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dimensionResource(R.dimen.padding_medium))
+                    .height(dimensionResource(R.dimen.fixed_text_height)),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = amphibian.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier
-                )
-                Text(
-                    text = "",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier
-                        .padding(bottom = dimensionResource(R.dimen.padding_small))
-                )
-            } else {
-                Text(
-                    text = amphibian.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(bottom = dimensionResource(R.dimen.padding_small))
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center
                 )
             }
-
             // Image
             Image(
                 painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(amphibian.imgSrc)),
@@ -143,49 +142,45 @@ fun AmphibiansDetailsScreen(
         onDetailScreenAndroidBackPressed()
     }
 
-    val currentAmphibian = amphibiansUiState.currentAmphibian
+    val currentAmphibian = amphibiansUiState.currentAmphibian as NetworkAmphibian
 
-    if (currentAmphibian != null) {
-        /*val typeTextRes = LocalNavigationAmphibiansTypesContentDataProvider.navigationAmphibiansTypesContentList
-            .find { it.amphibianType == currentAmphibian.type }?.text*/
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = dimensionResource(R.dimen.padding_large))
+    ) {
+        // Titre
+        Text(
+            text = currentAmphibian.name,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = dimensionResource(R.dimen.padding_small))
+        )
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = dimensionResource(R.dimen.padding_large))
-        ) {
-            // Titre
-            Text(
-                text = currentAmphibian.name,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimensionResource(R.dimen.padding_small))
-            )
-            Text(
-                text = currentAmphibian.type,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = dimensionResource(R.dimen.padding_small))
-            )
-            Image(
-                painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(currentAmphibian.imgSrc)),
-                contentDescription = currentAmphibian.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.5f)
-                    .clip(MaterialTheme.shapes.medium)
-            )
+        Text(
+            text = currentAmphibian.type,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = dimensionResource(R.dimen.padding_small))
+        )
+        Image(
+            painter = painterResource(id = LocalDataProviderAmphibians.getDrawableRes(currentAmphibian.imgSrc)),
+            contentDescription = currentAmphibian.name,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1.5f)
+                .clip(MaterialTheme.shapes.medium)
+        )
 
-            // Description complète
-            Text(
-                text = currentAmphibian.description,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .padding(top = dimensionResource(R.dimen.padding_medium))
-            )
-        }
+        // Description complète
+        Text(
+            text = currentAmphibian.description,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .padding(top = dimensionResource(R.dimen.padding_medium))
+        )
     }
 }

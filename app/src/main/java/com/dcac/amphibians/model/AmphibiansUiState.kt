@@ -12,9 +12,10 @@ package com.dcac.amphibians.model
 sealed interface AmphibiansUiState {
     data class Success(
         val amphibianList: List<Amphibian>,
-        val navigationAmphibiansTypesContent: List<String> ,
+        val filteredAmphibians: List<Amphibian>? = null,
+        val amphibiansTypes: List<String>,
         val currentAmphibian: Amphibian? = null,
-        val currentAmphibianType: String? = null,
+        val currentAmphibianType: String,
         val isShowingDetailsScreen: Boolean = false
     ) : AmphibiansUiState
 

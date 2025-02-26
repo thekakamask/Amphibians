@@ -2,23 +2,24 @@
 **Amphibians** is a modern Android application developed with Jetpack Compose, displaying a list of amphibians, along with details about them and their images using a REST API. The data will be retrieved from the Internet via a network request and will contain the name, type, description and image URL of each amphibian. The project follows Android development best practices, implementing MVVM architecture and using tools like Retrofit for network calls.
 
 ## ✅ **LAST MAJOR UPDATES**
-   - Replacement of the use of local data by dynamic retrieval of amphibians from the REST API.
-   - Addition of a Repository (AmphibiansRepository) to centralize network calls and manage data retrieval via Retrofit.
-   - Updated the ViewModel (AmphibiansViewModel) to integrate improved status management (Loading, Success, Error).
-   - Dynamic extraction and management of amphibian types retrieved directly from the API (no need for a static enum list).
-   - Optimized error handling: added logs and a more reactive UI in the event of query failure.
-   - Corrected centering of elements (Text, Image) in the LazyVerticalGrid.
+   - Successfully merged local data and REST API data into a single list while maintaining correct type handling (String for API, Int for local).
+   - Now the repository is responsible for merging and deduplicating amphibians, ensuring the ViewModel only deals with UI logic.
+   - The amphibian type filter now correctly differentiates between local and API data, making filtering seamless.
+   - Alphabetical sorting has been applied to both the amphibian list and the type filter list for better UX.
+   - The disappearing TopAppBar issue when navigating to details has been fixed by dynamically adjusting scroll behavior.
+   - Prevented ClassCastException When Clicking Local Data Items: Now all local amphibians are converted to API-style data before being used.
 
 ## ❌ **NEXT UPDATES**
-   - Re implement the filter for the type of amphibian (who now don't work with REST API data).
-   - Merge local data and REST API data and display all (at now REST API data only displayed).
-   - Extract image from REST API with Coil (for the REST API data).
+   - Load API images dynamically instead of using placeholders for a more realistic data experience.
+   - Reduce state updates that could cause UI lag, ensuring minimal recompositions.
+   - Display a retry button or auto-retry mechanism when network issues occur.
+   - Smooth & fluid UI/UX animations : improve LazyGrid scrolling performance, smooth TopAppBar and filter transitions, entry & exit animations for grid items.
 
 ## 📋 **Features**
    - 🐸 Display a list of Amphibians :
 
-      - 🟩 **IN PROGRESS** Retrieves and displays a list of amphibians via a REST API. ( at now app uses local datas)
-      - ✅ **DONE** Shows detailed information including name, type, description, and image.
+      - ✅ **DONE** Retrieves and displays a list of amphibians via a REST API.
+      - 🟩 **IN PROGRESS** Shows detailed information including name, type, description, and image.
 
    - 🎨 **Modern and Fluid Interface**:
 
@@ -38,7 +39,7 @@
    
       - 🟩 **IN PROGRESS** Implements lazy loading for efficient image handling. 
       - ❌ **NOT IMPLEMENTED** Uses Coil for fast and optimized image fetching.
-      - ✅ **DONE** Supports smooth scrolling and responsive display.
+      - 🟩 **IN PROGRESS** Supports smooth scrolling and responsive display.
       
    - 🛠 Error Handling & User Feedback:
 

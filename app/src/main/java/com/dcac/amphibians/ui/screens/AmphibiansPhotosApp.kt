@@ -35,12 +35,17 @@ import com.dcac.amphibians.model.AmphibiansUiState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AmphibiansPhotosApp() {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val amphibianViewModel: AmphibiansViewModel = viewModel(factory = AmphibiansViewModel.Factory)
     val amphibianUiState = amphibianViewModel.uiState.collectAsState().value
 
+    val scrollBehavior = if (amphibianUiState is AmphibiansUiState.Success && amphibianUiState.isShowingDetailsScreen) {
+        null
+    } else {
+        TopAppBarDefaults.enterAlwaysScrollBehavior()
+    }
+
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = scrollBehavior?.let { Modifier.nestedScroll(it.nestedScrollConnection) } ?: Modifier,
         topBar = {
             AmphibiansTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -80,7 +85,7 @@ fun AmphibiansPhotosApp() {
 @Composable
 fun AmphibiansTopAppBar(
     amphibiansUiState: AmphibiansUiState,
-    scrollBehavior: TopAppBarScrollBehavior,
+    scrollBehavior: TopAppBarScrollBehavior?,
     onBackArrowClick: () -> Unit,
     onTypeSelected:(String) -> Unit
 ) {
@@ -128,8 +133,8 @@ fun AmphibiansTopAppBar(
                             .fillMaxWidth()
                             .padding(vertical = dimensionResource(R.dimen.padding_small))
                     ) {
-                        items(amphibiansUiState.navigationAmphibiansTypesContent) { type ->
-                            NavigationAmphibiansTypesContentList(
+                        items(amphibiansUiState.amphibiansTypes) { type ->
+                            NavigationAmphibiansTypesListContent(
                                 type = type,
                                 isSelected = type == amphibiansUiState.currentAmphibianType,
                                 onNavigationAmphibiansTypesContentClick = { onTypeSelected(it) }
@@ -143,11 +148,12 @@ fun AmphibiansTopAppBar(
 }
 
 @Composable
-fun NavigationAmphibiansTypesContentList(
+fun NavigationAmphibiansTypesListContent(
     type: String,
     isSelected : Boolean,
     onNavigationAmphibiansTypesContentClick: (String) -> Unit
 ) {
+
     Card(modifier = Modifier.padding(
         vertical = dimensionResource(R.dimen.padding_medium),
         horizontal = dimensionResource(R.dimen.padding_small))

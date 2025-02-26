@@ -25,7 +25,15 @@ class DefaultAppContainer : AppContainer {
         retrofit.create(AmphibiansApiService::class.java)
     }
 
-    override val amphibiansRepository: AmphibiansRepository by lazy {
+    private val networkRepository: NetworkAmphibiansRepository by lazy {
         NetworkAmphibiansRepository(retrofitService)
+    }
+
+    private val localRepository: LocalAmphibiansRepository by lazy {
+        LocalAmphibiansRepository()
+    }
+
+    override val amphibiansRepository: AmphibiansRepository by lazy {
+        DefaultAmphibiansRepository(networkRepository, localRepository)
     }
 }
