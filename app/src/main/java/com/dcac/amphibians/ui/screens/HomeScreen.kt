@@ -22,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,28 +37,6 @@ import com.dcac.amphibians.R
 import com.dcac.amphibians.model.Amphibian
 import com.dcac.amphibians.model.AmphibiansUiState
 import com.dcac.amphibians.model.NetworkAmphibian
-
-@Composable
-fun HomeScreen(
-    amphibiansUiState: AmphibiansUiState.Success,
-    onAmphibiansClick: (Amphibian) -> Unit,
-    onDetailScreenAndroidBackPressed: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    if (amphibiansUiState.isShowingDetailsScreen) {
-        AmphibiansDetailsScreen(
-            amphibiansUiState = amphibiansUiState,
-            onDetailScreenAndroidBackPressed = onDetailScreenAndroidBackPressed,
-            modifier = modifier
-        )
-    } else {
-        AmphibiansGridScreen(
-            amphibiansUiState = amphibiansUiState,
-            onAmphibiansClick = onAmphibiansClick,
-            modifier = modifier
-        )
-    }
-}
 
 @Composable
 fun ErrorHomeScreen(
@@ -103,7 +80,7 @@ fun LoadingHomeScreen(
 }
 
 @Composable
-fun AmphibiansGridScreen(
+fun HomeScreen(
     amphibiansUiState: AmphibiansUiState.Success,
     onAmphibiansClick: (Amphibian) -> Unit,
     modifier: Modifier = Modifier

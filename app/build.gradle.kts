@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.storage)
 
+    implementation(libs.compose.animation)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

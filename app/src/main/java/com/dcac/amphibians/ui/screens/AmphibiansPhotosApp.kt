@@ -1,5 +1,11 @@
 package com.dcac.amphibians.ui.screens
 
+import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,24 +62,77 @@ fun AmphibiansPhotosApp() {
         }
     ) { paddingValues ->
         Surface(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            when (amphibianUiState) {
-                is AmphibiansUiState.Loading -> {
-                    LoadingHomeScreen()
-                }
 
-                is AmphibiansUiState.Error -> {
-                    ErrorHomeScreen(
-                        amphibiansUiState = amphibianUiState,
-                        onRetryClick = { amphibianViewModel.retryLoading() }
-                    )
-                }
+            AnimatedContent(
+                targetState = amphibianUiState,
+                transitionSpec = {
+                    when {
+                        targetState is AmphibiansUiState.Success && (targetState as AmphibiansUiState.Success).isShowingDetailsScreen -> {
+                            slideInHorizontally(
+                                initialOffsetX = { it },
+                                animationSpec = tween(500)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { -it },
+                                animationSpec = tween(500)
+                            )
+                        }
+                        targetState is AmphibiansUiState.Success && (targetState as AmphibiansUiState.Success).currentAmphibianType > (targetState as AmphibiansUiState.Success).previousAmphibianType -> {
+                            Log.d("Transition", "Current Type: ${(targetState as AmphibiansUiState.Success).currentAmphibianType}, Previous Type: ${(targetState as AmphibiansUiState.Success).previousAmphibianType}")
+                            slideInHorizontally(
+                                initialOffsetX = { it },
+                                animationSpec = tween(500)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { -it },
+                                animationSpec = tween(500)
+                            )
+                        }
+                        targetState is AmphibiansUiState.Success && (targetState as AmphibiansUiState.Success).currentAmphibianType < (targetState as AmphibiansUiState.Success).previousAmphibianType -> {
+                            slideInHorizontally(
+                                initialOffsetX = { -it },
+                                animationSpec = tween(500)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = tween(500)
+                            )
+                        }
+                        else -> {
+                            // Default transition if none of the above conditions are met
+                            slideInHorizontally(
+                                initialOffsetX = { -it },
+                                animationSpec = tween(500)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { it },
+                                animationSpec = tween(500)
+                            )
+                        }
+                    }
+                }, label = ""
+            ) { state ->
+                when (state) {
+                    is AmphibiansUiState.Loading -> {
+                        LoadingHomeScreen()
+                    }
 
-                is AmphibiansUiState.Success -> {
-                    HomeScreen(
-                        amphibiansUiState = amphibianUiState,
-                        onAmphibiansClick = { amphibianViewModel.updateCurrentAmphibian(it) },
-                        onDetailScreenAndroidBackPressed = { amphibianViewModel.resetHomeScreenStates() }
-                    )
+                    is AmphibiansUiState.Error -> {
+                        ErrorHomeScreen(
+                            amphibiansUiState = state,
+                            onRetryClick = { amphibianViewModel.retryLoading() }
+                        )
+                    }
+
+                    is AmphibiansUiState.Success -> {
+                        if (state.isShowingDetailsScreen) {
+                            AmphibiansDetailsScreen(
+                                amphibiansUiState = state,
+                                onDetailScreenAndroidBackPressed = { amphibianViewModel.resetHomeScreenStates() }
+                            )
+                        } else {
+                            HomeScreen(
+                                amphibiansUiState = state,
+                                onAmphibiansClick = { amphibianViewModel.updateCurrentAmphibian(it) }
+                            )
+                        }
+                    }
                 }
             }
         }

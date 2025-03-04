@@ -11,6 +11,7 @@ sealed interface AmphibiansUiState {
         val filteredAmphibians: List<Amphibian>? = null,
         val amphibiansTypes: List<String>,
         val currentAmphibian: Amphibian? = null,
+        val previousAmphibianType : String,
         val currentAmphibianType: String,
         val isShowingDetailsScreen: Boolean = false
     ) : AmphibiansUiState

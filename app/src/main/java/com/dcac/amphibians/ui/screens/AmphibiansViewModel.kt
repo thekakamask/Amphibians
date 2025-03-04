@@ -35,6 +35,7 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
             _uiState.value = AmphibiansUiState.Loading
             try {
                 val currentAmphibiansType = ALL_TYPES
+                val previousAmphibiansType = ALL_TYPES
                 val amphibiansList = amphibiansRepository.getAmphibians()
 
                 val formattedAmphibians = amphibiansList.map { amphibian ->
@@ -55,17 +56,13 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
 
                 println("🔍 Types extracted: $amphibianTypes")
 
-                val newState = AmphibiansUiState.Success(
+                _uiState.value = AmphibiansUiState.Success(
                     currentAmphibianType = currentAmphibiansType,
                     amphibianList = formattedAmphibians,
                     filteredAmphibians = formattedAmphibians,
-                    amphibiansTypes = amphibianTypes
+                    amphibiansTypes = amphibianTypes,
+                    previousAmphibianType = previousAmphibiansType
                 )
-
-                // Check if new state is different before emit it
-                if (_uiState.value != newState) {
-                    _uiState.value = newState
-                }
 
                 println("✅ Amphibians loaded successfully: ${amphibiansList.size} items")
             } catch (e: IOException) {
@@ -96,7 +93,7 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
         if (_uiState.value is AmphibiansUiState.Success) {
             _uiState.update {
                 val successState = it as AmphibiansUiState.Success
-
+                val previousType = successState.currentAmphibianType
                 val filteredList =
                     if (selectedType == ALL_TYPES) {
                         successState.amphibianList
@@ -107,7 +104,8 @@ class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository
                 }
                 successState.copy(
                     currentAmphibianType = selectedType,
-                    filteredAmphibians = filteredList
+                    filteredAmphibians = filteredList,
+                    previousAmphibianType = previousType
                 )
             }
         }
